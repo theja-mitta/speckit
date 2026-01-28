@@ -6,7 +6,7 @@ module.exports = {
     {
       displayName: 'unit',
       testEnvironment: 'node',
-      testMatch: ['**/__tests__/**/*.unit.*.(ts|tsx|js)'],
+      testMatch: ['**/__tests__/**/*.unit.*(ts|tsx|js)'],
       collectCoverage: true,
       coverageDirectory: '<rootDir>/coverage/unit',
       coverageThreshold: {
@@ -17,7 +17,7 @@ module.exports = {
       displayName: 'ui',
       testEnvironment: 'jsdom',
       setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-      testMatch: ['**/__tests__/**/*.ui.*.(ts|tsx|js)'],
+      testMatch: ['**/__tests__/**/*.ui.*(ts|tsx|js)'],
       collectCoverage: true,
       coverageDirectory: '<rootDir>/coverage/ui',
       coverageThreshold: {
@@ -26,7 +26,7 @@ module.exports = {
     }
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest'
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
 };
