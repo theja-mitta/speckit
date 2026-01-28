@@ -5,14 +5,14 @@
 
 ## Summary
 
-Deliver a minimal static Next.js + TypeScript Todo app styled with Tailwind. Key features: add, list, toggle, edit, delete, persisted in `localStorage`. Tests: unit + integration with >=80% coverage.
+Deliver a minimal static Next.js + TypeScript Todo app styled with Tailwind. Key features: add, list, toggle, edit, delete, persisted via a small `todoStore` adapter (backed by `localStorage`). Tests: unit + integration with >=80% coverage.
 
 ## Technical Context
 
 - Language/Version: TypeScript (via Next.js app dir)
 - Primary Dependencies: `next`, `react`, `react-dom`, `tailwindcss`
 - Testing: `jest` + `ts-jest` + `@testing-library/react` (UI), node unit tests
-- Storage: `localStorage` adapter (browser-only) with testable hooks
+-- Storage: `todoStore` adapter (localStorage-backed, browser-only) with testable hooks
 - Target Platform: Static export / CDN-hosted assets (Next.js static generation)
 - Performance Goals: Minimal bundle size for main page; images none (tiny app)
 - Constraints: No backend; everything must work offline in browser session via `localStorage`.
@@ -26,13 +26,13 @@ All Feature gates satisfied per constitution: Test-First & Coverage (>=80%), Cod
 ``text
 src/
 ├── app/                 # Next.js pages (or pages/ for pages-router)
-│   └── page.tsx         # mounts TodoList
+│   └── page.tsx         # mounts TodoApp
 ├── components/
-│   └── TodoList.tsx     # UI: input, add button, items
+│   └── TodoApp.tsx     # UI: input, add button, items (existing)
 ├── context/
 │   └── TodoContext.tsx  # add/update/toggle/delete + provider
 ├── lib/
-│   └── localStorage.ts  # adapter and serialization helpers
+│   └── todoStore.ts  # adapter and serialization helpers (existing)
 └── styles/
     └── globals.css      # Tailwind imports
 ```
@@ -40,10 +40,10 @@ src/
 ## Implementation Notes
 
 - `Todo` type: `{ id: string; title: string; completed: boolean; createdAt?: string }`.
-- Keep UI in-component for simplicity; extract logic to `TodoContext` to enable testing and decouple localStorage.
+-- Keep UI in-component for simplicity; extract logic to `TodoContext` to enable testing and decouple persistence from the `todoStore`.
 - `TodoContext` API: `add(title)`, `update(id, title)`, `toggle(id)`, `remove(id)`, `items`.
-- Use `useEffect` in provider to sync `items` → `localStorage` and initialize from `localStorage` on mount.
-- LocalStorage adapter exposes `loadTodos(): Todo[]` and `saveTodos(items: Todo[])` and handles corrupt data gracefully.
+-- Use `useEffect` in provider to sync `items` → `todoStore` and initialize from `todoStore` on mount.
+-- The `todoStore` adapter exposes `loadTodos(): Todo[]` and `saveTodos(items: Todo[])` and handles corrupt data gracefully. A small `TodoContext` wrapper will adapt `todoStore` to the context API.
 - Styling: Tailwind utility classes for layout and accessibility (focus rings, spacing, colors). No CSS modules required.
 
 ## Testing Strategy
@@ -53,14 +53,14 @@ src/
   - `context/TodoContext` — verify add/update/toggle/remove behaviors and effect on `items` state using a mocked storage adapter.
   - Small component unit tests for stateless helpers if any.
 - Integration tests (Jest + @testing-library/react, jsdom):
-  - Render `TodoList` with provider and exercise full flows: add → visible, toggle → checked state persists, edit → title updated, delete → removed.
-  - Simulate reload by re-mounting provider using the same mocked `localStorage` to check persistence.
+  - Render `TodoApp` with provider and exercise full flows: add → visible, toggle → checked state persists, edit → title updated, delete → removed.
+  - Simulate reload by re-mounting provider using the same mocked `todoStore` to check persistence.
 - Coverage: Enforce thresholds (>=80%) in `jest.config.cjs` and CI. Tests should fail locally/CI when below threshold.
 - Mocks: Provide a simple in-memory `localStorage` mock for tests; prefer dependency injection of storage adapter into provider for easier mocking.
 
 ## Tasks (high-level)
 
-- T1: Create `Todo` type and `localStorage` adapter (unit-tested).
+-- T1: Create `Todo` type and `todoStore` adapter (unit-tested).
 - T2: Implement `TodoContext` with full API and tests.
 - T3: Implement `TodoList` component and mount in `app/page.tsx`.
 - T4: Tailwind setup: `tailwind.config.js`, `postcss.config.js`, and `globals.css` imports.
@@ -69,7 +69,7 @@ src/
 
 ## Deliverables
 
-- `src/components/TodoList.tsx`, `src/context/TodoContext.tsx`, `src/lib/localStorage.ts`.
+-- `src/components/TodoApp.tsx`, `src/context/TodoContext.tsx`, `src/lib/todoStore.ts`.
 - Tests under `__tests__/` covering model, context, and UI flows.
 - `jest.config.cjs` with coverage thresholds and `.github/workflows/ci.yml`.
 - Tailwind config and `globals.css` with `@tailwind base; @tailwind components; @tailwind utilities;`.

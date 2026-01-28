@@ -114,6 +114,7 @@ As a user, I can delete a todo so I can remove completed or irrelevant tasks.
 - **FR-008**: The app MUST gracefully handle corrupted or missing localStorage data by falling back to an empty list and not throwing uncaught exceptions.
 
 - **FR-009**: Continuous integration MUST enforce a coverage gate: merges to the main branch are blocked when overall test coverage is below 80%.
+- **FR-009**: Continuous integration MUST enforce a coverage gate: merges to the main branch are blocked when the combined global test coverage reported by Jest (overall coverage aggregation across all projects) is below 80%.
 
 ### Key Entities
 
