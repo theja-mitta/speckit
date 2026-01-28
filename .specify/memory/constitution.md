@@ -1,50 +1,98 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+
+- Version change: none → 0.1.0
+- Modified principles: (new) Code Quality, Test-First & Coverage, UX Consistency,
+	Performance & Size Budget, Simplicity & Observability
+- Added sections: Constraints & Non-Functional Requirements; Development Workflow & Quality Gates
+- Removed sections: none
+- Templates validated: ✅ .specify/templates/plan-template.md
+										✅ .specify/templates/spec-template.md
+										✅ .specify/templates/tasks-template.md
+- Follow-up TODOs: RATIFICATION_DATE (deferred - provide original adoption date)
+-->
+
+# Speckit Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Code Quality (NON-NEGOTIABLE)
+All production code MUST be reviewed and pass automated linting and type checks.
+Pull requests SHOULD be small and focused (single purpose) and MUST include a
+clear changelog entry when behavior changes. No commented-out code in main
+branches. Dependencies MUST be justified and vetted for size, security, and
+maintenance. Rationale: maintainability and predictable reviews.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Test-First & Coverage (NON-NEGOTIABLE)
+Tests MUST be authored before or alongside implementation for any user-visible
+behavior. Unit tests cover logic; integration tests cover cross-component
+flows; visual or E2E tests cover critical user journeys. Critical modules
+MUST maintain at least 80% unit coverage; coverage targets for the app are a
+project-level decision but MUST be measurable in CI. Rationale: prevent
+regressions and enable safe refactoring.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. UX Consistency (MANDATORY)
+User-facing components MUST follow shared design tokens and the centralized
+component library. Visual regressions for core pages MUST be run in CI for
+P1 flows. Accessibility requirements: core pages MUST meet WCAG AA where
+feasible; interactive elements MUST be keyboard-navigable and labelled. Rationale:
+ensure a reliable, accessible experience across releases.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Performance & Size Budget (MANDATORY)
+Each published page or route MUST adhere to a measurable size and performance
+budget: production page bundles SHOULD be <= 300 KB gzipped, and critical
+pages MUST meet the CI Lighthouse performance target of >= 90 (desktop) or a
+project-agreed equivalent. Images and assets MUST be optimized and lazy-loaded
+where appropriate. Rationale: fast load times improve UX and reduce churn.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Simplicity & Observability (STRONG PREFERENCE)
+Favor simple, explicit solutions over complex abstractions. Instrument
+observable errors and key UX metrics (synthetic checks) so regressions are
+detectable in CI or monitoring. Error handling MUST provide actionable logs
+and minimal user-facing error text. Rationale: simplicity speeds iteration and
+observability reduces mean time to detect/resolve issues.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Constraints & Non-Functional Requirements
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Project type: simple static web app (static export / CDN-hosted assets).
+- Primary stack: framework-approved static export (e.g., Next.js static
+generation) and plain CDN hosting; avoid server runtime unless explicitly
+	required and approved.
+- Privacy: avoid collecting PII by default; any telemetry requires opt-in and a
+	documented data retention policy.
+- Accessibility: core flows MUST target WCAG AA compliance.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow & Quality Gates
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- All changes MUST go through pull requests and pass CI checks: linting,
+	type-checking, unit tests, integration tests (where applicable), and
+	visual/regression tests for P1 pages.
+- Merge criteria: at least one approving review from a maintainer plus green CI.
+- Performance gate: CI MUST run a lightweight Lighthouse check for core pages;
+	significant regressions (>= 10 point drop) MUST be addressed before merge.
+- Release process: deploy from main only after CI passes and release notes are
+	produced documenting user-visible changes.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Amendments to this constitution MUST be proposed as a repository PR that:
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+- Documents the change and rationale.
+- Includes a migration plan for affected repositories or templates.
+- Obtains approval from two maintainers (or a majority of the active core
+	maintainers when more than two exist).
+
+Versioning policy:
+
+- Follow semantic versioning for constitution updates: MAJOR for breaking
+	governance changes, MINOR for added principles or material guidance, PATCH
+	for clarifications and typos.
+- The `Last Amended` date MUST be updated to the commit date for changes.
+
+Compliance review:
+
+- Projects SHOULD run a constitution compliance check at least every 6 months.
+- Non-compliance for critical principles (Test-First, Code Quality, UX,
+	Performance) MUST be escalated for remediation.
+
+**Version**: 0.1.0 | **Ratified**: TODO(RATIFICATION_DATE): provide original adoption date | **Last Amended**: 2026-01-28
