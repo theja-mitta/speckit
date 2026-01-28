@@ -1,6 +1,6 @@
-export type TodoItem = { id: string; title: string; completed: boolean; createdAt?: string };
+import type { TodoItem } from "../types/todo";
 
-const STORAGE_KEY = 'speckit:todos';
+const STORAGE_KEY = "speckit:todos";
 
 export function loadTodos(): TodoItem[] {
   try {
@@ -8,7 +8,13 @@ export function loadTodos(): TodoItem[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.map((p: any) => ({ id: String(p.id), title: String(p.title), completed: !!p.completed, createdAt: p.createdAt }));
+    return parsed.map((p: any) => ({
+      id: String(p.id),
+      title: String(p.title),
+      completed: !!p.completed,
+      order: typeof p.order === "number" ? p.order : undefined,
+      createdAt: p.createdAt,
+    }));
   } catch (e) {
     return [];
   }

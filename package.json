@@ -15,6 +15,11 @@
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
+  "optionalDependencies": {
+    "@dnd-kit/core": "^8.0.0",
+    "@dnd-kit/sortable": "^8.0.0",
+    "framer-motion": "^10.12.16"
+  },
   "devDependencies": {
     "@babel/core": "^7.28.6",
     "@babel/preset-env": "^7.28.6",
