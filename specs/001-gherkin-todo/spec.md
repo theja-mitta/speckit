@@ -5,6 +5,13 @@
 **Status**: Draft  
 **Input**: User description: "Build a minimal Gherkin-style Todo app with add, list, toggle, edit, and delete. UI: text input, add button, list items showing title and completed state. Persist with localStorage. Acceptance: add shows in list; toggle marks complete; edit updates title; delete removes; UI persists on reload. Testing: unit tests for model, service/context, and storage; integration tests for UI flow; aim for >=80% coverage."
 
+## Clarifications
+
+### Session 2026-01-28
+
+- Q: CI enforcement for coverage target (>=80%)? → A: Option A — CI fails merges when overall coverage < 80% (strict gate).
+
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
@@ -105,6 +112,8 @@ As a user, I can delete a todo so I can remove completed or irrelevant tasks.
 - **FR-006**: The app MUST persist todos in `localStorage` under a single key and restore them on page load.
 - **FR-007**: The UI MUST be keyboard-accessible (focusable input, Enter for add, tab navigation for controls).
 - **FR-008**: The app MUST gracefully handle corrupted or missing localStorage data by falling back to an empty list and not throwing uncaught exceptions.
+
+- **FR-009**: Continuous integration MUST enforce a coverage gate: merges to the main branch are blocked when overall test coverage is below 80%.
 
 ### Key Entities
 
