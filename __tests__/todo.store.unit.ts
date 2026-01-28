@@ -34,6 +34,15 @@ describe('todoStore', () => {
     expect(loaded[0].completed).toBe(false);
   });
 
+  test('parses stored array with order', () => {
+    const items = [{ id: '5', title: 'ordered', completed: false, order: 42 }];
+    // @ts-ignore
+    global.localStorage = { getItem: () => JSON.stringify(items) };
+    const loaded = loadTodos();
+    expect(loaded.length).toBe(1);
+    expect(loaded[0].order).toBe(42);
+  });
+
   test('saveTodos calls setItem', () => {
     let wrote: string | null = null;
     // @ts-ignore

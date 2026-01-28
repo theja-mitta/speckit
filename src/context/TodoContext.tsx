@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { TodoItem, loadTodos, saveTodos } from "../lib/todoStore";
+import { loadTodos, saveTodos } from "../lib/todoStore";
+import type { TodoItem } from "../types/todo";
 
 type TodoContextValue = {
   items: TodoItem[];
@@ -8,6 +9,7 @@ type TodoContextValue = {
   update: (id: string, title: string) => void;
   toggle: (id: string) => void;
   remove: (id: string) => void;
+  move: (id: string, toSection: "active" | "completed", toIndex: number) => void;
 };
 
 const TodoContext = createContext<TodoContextValue | undefined>(undefined);
@@ -25,8 +27,11 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
 
   const add = (title: string) => {
     if (!title.trim()) return;
-    const item: TodoItem = { id: Date.now().toString(), title: title.trim(), completed: false };
-    setItems((s) => [item, ...s]);
+    setItems((s) => {
+      const maxOrder = s.reduce((m, it) => Math.max(m, it.order ?? 0), 0);
+      const item: TodoItem = { id: Date.now().toString(), title: title.trim(), completed: false, order: maxOrder + 1, createdAt: new Date().toISOString() };
+      return [item, ...s];
+    });
   };
 
   const update = (id: string, title: string) => {
@@ -41,8 +46,36 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     setItems((s) => s.filter((t) => t.id !== id));
   };
 
+  const move = (id: string, toSection: "active" | "completed", toIndex: number) => {
+    setItems((s) => {
+      const item = s.find((x) => x.id === id);
+      if (!item) return s;
+
+      // remove item
+      const remaining = s.filter((x) => x.id !== id);
+
+      // split into sections
+      const active = remaining.filter((x) => !x.completed);
+      const completed = remaining.filter((x) => x.completed);
+
+      // determine destination list reference
+      const destList = toSection === "active" ? active : completed;
+
+      // insert at index
+      const newDest = [...destList.slice(0, toIndex), { ...item, completed: toSection === "completed" }, ...destList.slice(toIndex)];
+
+      // recompute orders: higher order -> appears first
+      const assignOrders = (arr: TodoItem[]) => arr.map((it, idx) => ({ ...it, order: arr.length - idx }));
+
+      const newActive = toSection === "active" ? assignOrders(newDest) : assignOrders(active);
+      const newCompleted = toSection === "completed" ? assignOrders(newDest) : assignOrders(completed);
+
+      return [...newActive, ...newCompleted];
+    });
+  };
+
   return (
-    <TodoContext.Provider value={{ items, add, update, toggle, remove }}>{children}</TodoContext.Provider>
+    <TodoContext.Provider value={{ items, add, update, toggle, remove, move }}>{children}</TodoContext.Provider>
   );
 }
 
