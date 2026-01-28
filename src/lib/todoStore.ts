@@ -1,4 +1,5 @@
 import type { TodoItem } from "../types/todo";
+export type { TodoItem } from "../types/todo";
 
 const STORAGE_KEY = "speckit:todos";
 
